@@ -1,22 +1,25 @@
 <?php
-    namespace App\Models;
 
-    class Listing {
-        public static function all() {
-            return [
-                ['id' => 1, 'title' => 'Listing 1', 'description' => 'lorem ipsum emet sakdkadnksad' ],
-                ['id' => 2, 'title' => 'Listing 2', 'description' => 'lorem ipsum emet sakdkadnksad' ],
-                ['id' => 3, 'title' => 'Listing 3', 'description' => 'lorem ipsum emet sakdkadnksad' ],
-            ];
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Listing extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['title', 'company', 'location', 'email', 'website', 'description', 'tags'];
+
+    public function scopeFilter($query, array $filters) {
+        if($filters['tag'] ?? false) {
+            $query->where('tags', 'like', '%' . $filters['tag'] . '%'); //where tags like %$tag%
         }
 
-        public static function find($id) {
-            $listings = self::all();
-
-            foreach ($listings as $listing) {
-                if ($listing['id'] == $id) {
-                    return $listing;
-                }
-            }
-         }
+        if($filters['search'] ?? false) {
+            $query->where('title', 'like', '%' . $filters['search'] . '%')
+            ->orWhere('description', 'like', '%' . $filters['search'] . '%') //where title like %$search%
+            ->orWhere('tags', 'like', '%' . $filters['search'] . '%'); //where title like %$search%
+        }
     }
+}
