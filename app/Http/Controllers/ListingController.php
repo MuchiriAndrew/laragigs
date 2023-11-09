@@ -10,9 +10,10 @@ class ListingController extends Controller
 {
     //show all listings
     public function index() {
+        // dd(Listing::latest()->filter(request(['tag', 'search']))->paginate(2));
         return view('listings.index', [
             // 'listings' => Listing::all(),
-            'listings' => Listing::latest()->filter(request(['tag', 'search']))->get()//latest() is a query scope
+            'listings' => Listing::latest()->filter(request(['tag', 'search']))->paginate(6)//latest() is a query scope
         ]);
     }
 
@@ -30,7 +31,7 @@ class ListingController extends Controller
 
     //store listing data
     public function store(Request $request) {
-        // dd($request);
+        // dd($request->file('logo')->store());
         $formFields = $request->validate([
             'title' => 'required',
             'company' => ['required', Rule::unique('listings', 'company')],
@@ -41,8 +42,51 @@ class ListingController extends Controller
             'tags' => 'required'
         ]);
 
+        if($request->hasFile('logo')) {
+            $formFields['logo'] = $request->file('logo')->store('logos', 'public');
+        }
+
         Listing::create($formFields);
 
-        return redirect('/');
+        // Session::flash('message', 'Your listing has been added!');
+
+        return redirect('/') ->with('message', 'Listing created successfully!');
+    }
+
+    //show edit form
+    public function edit(Listing $listing) {
+        // dd($listing->id);
+        return view('listings.edit', ['listing' => $listing]);
+    }
+
+    //update listing
+
+    public function update(Request $request, Listing $listing) {
+        // dd($listing->id);
+        $formFields = $request->validate([
+            'title' => 'required',
+            'company' => ['required'],
+            'location' => 'required',
+            'email' => ['required', 'email'],
+            'website' => 'required',
+            'description' => 'required|min:20',
+            'tags' => 'required'
+        ]);
+
+        if($request->hasFile('logo')) {
+            $formFields['logo'] = $request->file('logo')->store('logos', 'public');
+        }
+
+        $listing->update($formFields);
+
+        // Session::flash('message', 'Your listing has been added!');
+
+        return redirect('/listings/' . $listing->id) ->with('message', 'Listing created successfully!');
+    }
+
+    //delete listing
+    public function delete(Listing $listing) {
+        $listing->delete();
+        return redirect('/')->with('message', 'Listing deleted successfully!');
     }
 }

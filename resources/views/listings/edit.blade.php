@@ -3,13 +3,14 @@
 >
     <header class="text-red-center">
         <h2 class="text-red-2xl font-bold uppercase mb-1">
-            Create a Gig
+            Edit Gig
         </h2>
-        <p class="mb-4">Post a gig to find a developer</p>
+        <p class="mb-4">Edit: {{$listing->title}}</p>
     </header>
 
-    <form action="/listings" method="POST" enctype="multipart/form-data">
+    <form action="/listings/{{$listing->id}}" method="POST" enctype="multipart/form-data">
         @csrf
+        @method('PUT')
         <div class="mb-6">
             <label
                 for="company"
@@ -20,7 +21,7 @@
                 type="text-red"
                 class="border border-gray-200 rounded p-2 w-full"
                 name="company"
-                value = "{{old('company')}}"
+                value = "{{$listing->company}}"
             />
             @error('company')
                <p class="text-red-500 text-red-xs mt-1">{{$message}}</p>
@@ -36,7 +37,7 @@
                 class="border border-gray-200 rounded p-2 w-full"
                 name="title"
                 placeholder="Example: Senior Laravel Developer"
-                value = "{{old('title')}}"
+                value = "{{$listing->title}}"
             />
             @error('title')
                <p class="text-red-500 text-red-xs mt-1">{{$message}}</p>
@@ -54,7 +55,7 @@
                 class="border border-gray-200 rounded p-2 w-full"
                 name="location"
                 placeholder="Example: Remote, Boston MA, etc"
-                value = "{{old('location')}}"
+                value = "{{$listing->location}}"
             />
             @error('location')
                <p class="text-red-500 text-red-xs mt-1">{{$message}}</p>
@@ -69,7 +70,7 @@
                 type="text-red"
                 class="border border-gray-200 rounded p-2 w-full"
                 name="email"
-                value = "{{old('email')}}"
+                value = "{{$listing->email}}"
             />
             @error('email')
                <p class="text-red-500 text-red-xs mt-1">{{$message}}</p>
@@ -87,7 +88,7 @@
                 type="text-red"
                 class="border border-gray-200 rounded p-2 w-full"
                 name="website"
-                value = "{{old('website')}}"
+                value = "{{$listing->website}}"
             />
             @error('website')
                <p class="text-red-500 text-red-xs mt-1">{{$message}}</p>
@@ -103,7 +104,7 @@
                 class="border border-gray-200 rounded p-2 w-full"
                 name="tags"
                 placeholder="Example: Laravel, Backend, Postgres, etc"
-                value = "{{old('tags')}}"
+                value = "{{$listing->tags}}"
             />
             @error('tags')
                <p class="text-red-500 text-red-xs mt-1">{{$message}}</p>
@@ -119,6 +120,12 @@
                 class="border border-gray-200 rounded p-2 w-full"
                 name="logo"
             />
+            <img
+                    class="w-48 mr-6 mb-6"
+                    src="{{$listing->logo ? asset('storage/' . $listing->logo) : asset('/images/no-image.png')}}"
+                    alt=""
+            />
+
             @error('logo')
                <p class="text-red-500 text-red-xs mt-1">{{$message}}</p>
             @enderror
@@ -136,7 +143,7 @@
                 name="description"
                 rows="10"
                 placeholder="Include tasks, requirements, salary, etc"
-            >{{old('company')}}</textarea>
+            >{{$listing->description}}</textarea>
             @error('description')
                <p class="text-red-500 text-red-xs mt-1">{{$message}}</p>
             @enderror
@@ -146,7 +153,7 @@
             <button
                 class="bg-laravel text-red-white rounded py-2 px-4 hover:bg-black"
             >
-                Create Gig
+                Update Gig
             </button>
 
             <a href="/" class="text-red-black ml-4"> Back </a>
