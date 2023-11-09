@@ -10,6 +10,12 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+
+    public function listings() {
+        return $this->hasMany(Listing::class, 'user_id');
+    }
+
+
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -42,4 +48,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    //relationship to listings
 }
